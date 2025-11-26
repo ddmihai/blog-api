@@ -29,10 +29,10 @@ app.use("/project-docs", docsRouter);
 
 
 // Routes
-app.use("/api", router);
 app.use('/api/auth', userRouter);
 app.use('/api/categories', categoryRouter);
 app.use('/api/articles', articleRouter);
+app.use("/api", router);
 
 
 
