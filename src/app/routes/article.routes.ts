@@ -28,7 +28,7 @@ articleRouter.post(
 );
 
 
-// get last 10 published articles
+// get last 10 published articlessss
 articleRouter.get("/latest", getLatestArticles);
 
 // get featured articles
@@ -39,5 +39,7 @@ articleRouter.get("/published", getPublishedArticles);
 
 // get all unpublished articles - admin only
 articleRouter.get("/unpublished", requireAuth, requireAdmin, getUnpublishedArticles);
+
+
 
 export default articleRouter;

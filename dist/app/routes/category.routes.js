@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const rateLimiter_middleware_1 = require("../middlewares/rateLimiter.middleware");
+const create_controller_1 = require("../controllers/categories/create.controller");
+const getAllCategories_controller_1 = require("../controllers/categories/getAllCategories.controller");
+const categoryRouter = (0, express_1.Router)();
+categoryRouter.post("/create", rateLimiter_middleware_1.globalRateLimiter, create_controller_1.createCategory);
+categoryRouter.get("/categories", getAllCategories_controller_1.getAllCategories);
+exports.default = categoryRouter;
