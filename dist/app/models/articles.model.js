@@ -5,6 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // src/app/models/article.model.ts
 const mongoose_1 = __importDefault(require("mongoose"));
+const imageSchema = new mongoose_1.default.Schema({
+    url: { type: String, required: true },
+    publicId: { type: String, required: true },
+}, { _id: false } // no separate _id for each image
+);
 // --- helpers -------------------------------------------------
 function slugify(input) {
     return input
@@ -75,16 +80,8 @@ const articleSchema = new mongoose_1.default.Schema({
         type: String,
         trim: true,
     },
-    coverImage: {
-        type: String,
-        trim: true,
-    },
-    images: [
-        {
-            type: String,
-            trim: true,
-        },
-    ],
+    coverImage: imageSchema,
+    images: [imageSchema],
     readingTime: {
         type: Number,
         min: 1,

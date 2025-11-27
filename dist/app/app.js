@@ -8,7 +8,6 @@ const cors_1 = __importDefault(require("cors"));
 const helmet_1 = __importDefault(require("helmet"));
 const morgan_1 = __importDefault(require("morgan"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
-const index_routes_1 = __importDefault(require("./routes/index.routes"));
 const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
 const category_routes_1 = __importDefault(require("./routes/category.routes"));
 const article_routes_1 = __importDefault(require("./routes/article.routes"));
@@ -19,7 +18,7 @@ const app = (0, express_1.default)();
 // Middlewares
 app.use((0, helmet_1.default)());
 app.use(express_1.default.json());
-app.use((0, cors_1.default)({ origin: "http://localhost:5173", credentials: true }));
+app.use((0, cors_1.default)({ origin: "http://localhost:5174", credentials: true }));
 app.use((0, morgan_1.default)("dev"));
 app.use((0, cookie_parser_1.default)());
 // Docs
@@ -28,9 +27,26 @@ app.use("/docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.defaul
 }));
 app.use("/project-docs", docs_routes_1.default);
 // Routes
-app.use("/api", index_routes_1.default);
 app.use('/api/auth', auth_routes_1.default);
 app.use('/api/categories', category_routes_1.default);
 app.use('/api/articles', article_routes_1.default);
+// Root route (move outside of /api router)
+app.get("/", (req, res) => {
+    res.json({
+        message: "Welcome to the Blog API",
+        endpoints: {
+            docs: "/docs",
+            api: "/api",
+            health: "/api/health"
+        }
+    });
+});
+// 404 catch-all (MUST be last, after all other routes)
+app.use((req, res) => {
+    res.status(404).json({
+        message: "Route not found",
+        path: req.path
+    });
+});
 // ✅ use ES export:
 exports.default = app;

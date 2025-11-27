@@ -1,6 +1,5 @@
 import { Request, Response } from "express"
 
-
 export const uploadSingleImage = async (req: Request, res: Response) => {
     const file = req.file as any
 
@@ -11,14 +10,15 @@ export const uploadSingleImage = async (req: Request, res: Response) => {
         })
     }
 
-    // multer-storage-cloudinary usually puts the URL on file.path
-    // or file.secure_url depending on version/config
+    console.log('Uploaded file info:', file)
+
     const url: string = file.secure_url || file.path
+    const publicId: string = file.public_id || file.filename // 👈 use filename
 
     return res.status(201).json({
         message: 'Image uploaded successfully',
         status: 201,
         url,
-        publicId: file.public_id,
+        publicId,
     })
 }

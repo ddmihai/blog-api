@@ -10,13 +10,11 @@ const getLastTenArticles_controller_1 = require("../controllers/articles/getLast
 const getUnpublishedArticles_controller_1 = require("../controllers/articles/getUnpublishedArticles.controller");
 const getFeaturedArticles_controller_1 = require("../controllers/articles/getFeaturedArticles.controller");
 const getAllPublishedArticles_controller_1 = require("../controllers/articles/getAllPublishedArticles.controller");
+const uploadSingleImage_controller_1 = require("../controllers/articles/uploadSingleImage.controller");
 const articleRouter = (0, express_1.Router)();
 // route
-articleRouter.post("/articles", requireAuth_middleware_1.requireAuth, requireAdmin_middleware_1.requireAdmin, rateLimiter_middleware_1.doubleClickLimiter, upload_cloudinary_middleware_1.upload.fields([
-    { name: "coverImage", maxCount: 1 },
-    { name: 'images', maxCount: 10 }
-]), createArticle_controller_1.createArticle);
-// get last 10 published articles
+articleRouter.post("/articles", requireAuth_middleware_1.requireAuth, requireAdmin_middleware_1.requireAdmin, rateLimiter_middleware_1.doubleClickLimiter, createArticle_controller_1.createArticle);
+// get last 10 published articlessss
 articleRouter.get("/latest", getLastTenArticles_controller_1.getLatestArticles);
 // get featured articles
 articleRouter.get("/featured", getFeaturedArticles_controller_1.getFeaturedArticles);
@@ -24,4 +22,6 @@ articleRouter.get("/featured", getFeaturedArticles_controller_1.getFeaturedArtic
 articleRouter.get("/published", getAllPublishedArticles_controller_1.getPublishedArticles);
 // get all unpublished articles - admin only
 articleRouter.get("/unpublished", requireAuth_middleware_1.requireAuth, requireAdmin_middleware_1.requireAdmin, getUnpublishedArticles_controller_1.getUnpublishedArticles);
+// single image upload route for articles - admin only
+articleRouter.post('/image', requireAuth_middleware_1.requireAuth, requireAdmin_middleware_1.requireAdmin, rateLimiter_middleware_1.doubleClickLimiter, upload_cloudinary_middleware_1.upload.single('image'), uploadSingleImage_controller_1.uploadSingleImage);
 exports.default = articleRouter;

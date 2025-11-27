@@ -21,10 +21,6 @@ articleRouter.post(
     requireAuth,
     requireAdmin,
     doubleClickLimiter,
-    upload.fields([
-        { name: "coverImage", maxCount: 1 },
-        { name: 'images', maxCount: 10 }
-    ]),
     createArticle
 );
 

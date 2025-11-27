@@ -3,9 +3,20 @@ import Article from "../../models/articles.model";
 
 
 
+
 export const createArticle = async (req: Request, res: Response) => {
     try {
-        const { title, subtitle, content, category, tags, isPublished, isFeatured } = req.body;
+        const {
+            title,
+            subtitle,
+            content,
+            category,
+            tags,
+            isPublished,
+            isFeatured,
+            images,
+            coverImage, // optional: { url, publicId } if you support it
+        } = req.body;
 
         if (!title || !content) {
             return res.status(400).json({ message: "Title and content are required." });
@@ -14,22 +25,6 @@ export const createArticle = async (req: Request, res: Response) => {
         if (!(req as any).user?._id) {
             return res.status(401).json({ message: "Not authenticated." });
         }
-
-        // ---- files from multer-cloudinary ----
-        const files = req.files as {
-            [fieldname: string]: Express.Multer.File[];
-        } | undefined;
-
-
-
-        const coverImageFile = files?.coverImage?.[0];
-        const imagesFiles = files?.images || [];
-
-        // Cloudinary stores the URL in the 'path' property
-        const coverImage = coverImageFile?.path;
-        const images = imagesFiles.map(f => f.path).filter(Boolean);
-
-
 
         // ---- normalize tags ----
         let normalizedTags: string[] | undefined;
@@ -52,6 +47,13 @@ export const createArticle = async (req: Request, res: Response) => {
         const featured =
             typeof isFeatured === "string" ? isFeatured === "true" : Boolean(isFeatured);
 
+        // images from body – we expect [{ url, publicId }, ...]
+        const bodyImages = Array.isArray(images) ? images : [];
+        const mappedImages = bodyImages.map((img: any) => ({
+            url: img.url,
+            publicId: img.publicId,
+        }));
+
         const articleData = {
             title: title.trim(),
             subtitle: subtitle?.trim(),
@@ -59,17 +61,14 @@ export const createArticle = async (req: Request, res: Response) => {
             category: category || undefined,
             author: (req as any).user._id,
             tags: normalizedTags,
-            ...(coverImage && { coverImage }), // Only include if exists
-            ...(images.length > 0 && { images }), // Only include if exists
+            // if your schema supports these as objects:
+            ...(coverImage && { coverImage }),
+            ...(mappedImages.length > 0 && { images: mappedImages }),
             isPublished: published,
             isFeatured: featured,
         };
 
-
-
         const article = await Article.create(articleData);
-
-
 
         return res.status(201).json({
             message: "Article created successfully",
@@ -80,7 +79,7 @@ export const createArticle = async (req: Request, res: Response) => {
         if (error instanceof Error) {
             return res.status(500).json({
                 message: "Internal server error",
-                error: error.message
+                error: error.message,
             });
         }
         return res.status(500).json({ message: "Internal server error" });

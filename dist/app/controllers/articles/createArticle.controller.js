@@ -7,20 +7,14 @@ exports.createArticle = void 0;
 const articles_model_1 = __importDefault(require("../../models/articles.model"));
 const createArticle = async (req, res) => {
     try {
-        const { title, subtitle, content, category, tags, isPublished, isFeatured } = req.body;
+        const { title, subtitle, content, category, tags, isPublished, isFeatured, images, coverImage, // optional: { url, publicId } if you support it
+         } = req.body;
         if (!title || !content) {
             return res.status(400).json({ message: "Title and content are required." });
         }
         if (!req.user?._id) {
             return res.status(401).json({ message: "Not authenticated." });
         }
-        // ---- files from multer-cloudinary ----
-        const files = req.files;
-        const coverImageFile = files?.coverImage?.[0];
-        const imagesFiles = files?.images || [];
-        // Cloudinary stores the URL in the 'path' property
-        const coverImage = coverImageFile?.path;
-        const images = imagesFiles.map(f => f.path).filter(Boolean);
         // ---- normalize tags ----
         let normalizedTags;
         if (Array.isArray(tags)) {
@@ -37,6 +31,12 @@ const createArticle = async (req, res) => {
         }
         const published = typeof isPublished === "string" ? isPublished === "true" : Boolean(isPublished);
         const featured = typeof isFeatured === "string" ? isFeatured === "true" : Boolean(isFeatured);
+        // images from body – we expect [{ url, publicId }, ...]
+        const bodyImages = Array.isArray(images) ? images : [];
+        const mappedImages = bodyImages.map((img) => ({
+            url: img.url,
+            publicId: img.publicId,
+        }));
         const articleData = {
             title: title.trim(),
             subtitle: subtitle?.trim(),
@@ -44,8 +44,9 @@ const createArticle = async (req, res) => {
             category: category || undefined,
             author: req.user._id,
             tags: normalizedTags,
-            ...(coverImage && { coverImage }), // Only include if exists
-            ...(images.length > 0 && { images }), // Only include if exists
+            // if your schema supports these as objects:
+            ...(coverImage && { coverImage }),
+            ...(mappedImages.length > 0 && { images: mappedImages }),
             isPublished: published,
             isFeatured: featured,
         };
@@ -60,7 +61,7 @@ const createArticle = async (req, res) => {
         if (error instanceof Error) {
             return res.status(500).json({
                 message: "Internal server error",
-                error: error.message
+                error: error.message,
             });
         }
         return res.status(500).json({ message: "Internal server error" });

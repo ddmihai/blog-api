@@ -31,7 +31,7 @@ const login = async (req, res) => {
         // generate auth token
         const token = jsonwebtoken_1.default.sign({ _id: existingUser._id, email: existingUser.email, role: existingUser.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
         res.cookie("token", token, {
-            httpOnly: process.env.NODE_ENV === "production",
+            httpOnly: true,
             sameSite: "lax",
             secure: process.env.NODE_ENV === "production",
             maxAge: 7 * 24 * 60 * 60 * 1000,
