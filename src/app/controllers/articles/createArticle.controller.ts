@@ -72,7 +72,7 @@ export const createArticle = async (req: Request, res: Response) => {
 
         return res.status(201).json({
             message: "Article created successfully",
-            article,
+            status: 201
         });
     } catch (error) {
         console.error("Create article error:", error);
