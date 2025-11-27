@@ -8,6 +8,7 @@ import { getLatestArticles } from "../controllers/articles/getLastTenArticles.co
 import { getUnpublishedArticles } from "../controllers/articles/getUnpublishedArticles.controller";
 import { getFeaturedArticles } from "../controllers/articles/getFeaturedArticles.controller";
 import { getPublishedArticles } from "../controllers/articles/getAllPublishedArticles.controller";
+import { uploadSingleImage } from "../controllers/articles/uploadSingleImage.controller";
 
 
 
@@ -40,6 +41,15 @@ articleRouter.get("/published", getPublishedArticles);
 // get all unpublished articles - admin only
 articleRouter.get("/unpublished", requireAuth, requireAdmin, getUnpublishedArticles);
 
+
+// single image upload route for articles - admin only
+articleRouter.post('/image',
+    requireAuth,
+    requireAdmin,
+    doubleClickLimiter,
+    upload.single('image'),
+    uploadSingleImage
+);
 
 
 export default articleRouter;

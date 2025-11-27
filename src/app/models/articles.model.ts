@@ -26,6 +26,28 @@ export interface IArticle extends Document {
     updatedAt?: Date;
 }
 
+
+interface ArticleImage {
+    url: string
+    publicId: string
+}
+
+export interface IArticleDoc extends Document {
+    title: string
+    // ...other fields...
+    coverImage?: ArticleImage
+    images: ArticleImage[]
+}
+
+const imageSchema = new mongoose.Schema<ArticleImage>(
+    {
+        url: { type: String, required: true },
+        publicId: { type: String, required: true },
+    },
+    { _id: false } // no separate _id for each image
+)
+
+
 // --- helpers -------------------------------------------------
 
 function slugify(input: string) {
@@ -112,16 +134,8 @@ const articleSchema = new mongoose.Schema<IArticle>(
             trim: true,
         },
 
-        coverImage: {
-            type: String,
-            trim: true,
-        },
-        images: [
-            {
-                type: String,
-                trim: true,
-            },
-        ],
+        coverImage: imageSchema,
+        images: [imageSchema],
 
         readingTime: {
             type: Number,
