@@ -9,6 +9,9 @@ import { getUnpublishedArticles } from "../controllers/articles/getUnpublishedAr
 import { getFeaturedArticles } from "../controllers/articles/getFeaturedArticles.controller";
 import { getPublishedArticles } from "../controllers/articles/getAllPublishedArticles.controller";
 import { uploadSingleImage } from "../controllers/articles/uploadSingleImage.controller";
+import { getArticleById } from "../controllers/articles/getArticleById.controller";
+import { updateArticle } from "../controllers/articles/editArticle.controller";
+import { getAllArticlesAdmin } from "../controllers/articles/getAllAdminArticles.controller";
 
 
 
@@ -46,6 +49,40 @@ articleRouter.post('/image',
     upload.single('image'),
     uploadSingleImage
 );
+
+
+// Update article (admin)
+articleRouter.put(
+    "/articles/:id",
+    requireAuth,
+    requireAdmin,
+    updateArticle
+)
+
+
+
+// get all articles for admin use (admin use only)
+articleRouter.get(
+    "/articles/admin",
+    requireAuth,
+    requireAdmin,
+    getAllArticlesAdmin
+);
+
+
+
+/* 
+    get article by id
+*/
+articleRouter.get(
+    "/articles/:id",
+    getArticleById
+);
+
+
+
+
+
 
 
 export default articleRouter;
