@@ -12,6 +12,7 @@ import { uploadSingleImage } from "../controllers/articles/uploadSingleImage.con
 import { getArticleById } from "../controllers/articles/getArticleById.controller";
 import { updateArticle } from "../controllers/articles/editArticle.controller";
 import { getAllArticlesAdmin } from "../controllers/articles/getAllAdminArticles.controller";
+import { deleteArticle } from "../controllers/articles/deleteArticle.controller";
 
 
 
@@ -80,7 +81,10 @@ articleRouter.get(
 );
 
 
-
+/* 
+    Delete article by id
+*/
+articleRouter.delete('/articles/:id', requireAuth, requireAdmin, deleteArticle);
 
 
 
