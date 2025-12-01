@@ -1,5 +1,9 @@
 // src/app/models/article.model.ts
 import mongoose, { Document, Model } from "mongoose";
+interface ArticleImage {
+    url: string;
+    publicId: string;
+}
 
 export interface IArticle extends Document {
     // Core content
@@ -8,28 +12,21 @@ export interface IArticle extends Document {
     content: string;
 
     // Relations
-    category?: mongoose.Types.ObjectId; // optional – can reuse Category
-    author: mongoose.Types.ObjectId;    // ref User
+    category?: mongoose.Types.ObjectId;
+    author: mongoose.Types.ObjectId;
 
     // Metadata
     tags?: string[];
     slug?: string;
     excerpt?: string;
-    coverImage?: string;
-    images?: string[];
-    readingTime?: number; // in minutes
+    coverImage?: ArticleImage;
+    images?: ArticleImage[];
+    readingTime?: number;
     isPublished: boolean;
     isFeatured: boolean;
 
-    // Timestamps
     createdAt?: Date;
     updatedAt?: Date;
-}
-
-
-interface ArticleImage {
-    url: string
-    publicId: string
 }
 
 export interface IArticleDoc extends Document {

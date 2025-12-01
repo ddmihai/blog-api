@@ -53,7 +53,7 @@ const createArticle = async (req, res) => {
         const article = await articles_model_1.default.create(articleData);
         return res.status(201).json({
             message: "Article created successfully",
-            article,
+            status: 201
         });
     }
     catch (error) {

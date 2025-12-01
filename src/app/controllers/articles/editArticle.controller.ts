@@ -67,25 +67,17 @@ export const updateArticle = async (req: Request, res: Response) => {
         // handle cases:
         // - images: string[]
         // - images: { url: string; publicId?: string }[]
-        const imageUrls: string[] = Array.isArray(images)
-            ? images
-                .map((img: any) =>
-                    typeof img === "string" ? img : img?.url
-                )
-                .filter((u: any) => typeof u === "string" && u.trim().length > 0)
-            : existing.images || []
-
-        // ---- coverImage: store ONLY URL (string | undefined) ----
-        // handle:
-        // - coverImage: string
-        // - coverImage: { url: string; publicId?: string }
-        let coverImageUrl: string | undefined = existing.coverImage
-
-        if (typeof coverImage === "string") {
-            coverImageUrl = coverImage
-        } else if (coverImage && typeof coverImage === "object" && coverImage.url) {
-            coverImageUrl = coverImage.url
+        // ---- images: store full objects { url, publicId }[] ----
+        if (Array.isArray(images)) {
+            existing.images = images.map((img: any) => ({
+                url: typeof img === "string" ? img : img.url,
+                publicId:
+                    typeof img === "string"
+                        ? ""                     // or derive from URL if you want
+                        : img.publicId || "",
+            }))
         }
+
 
         // ---- apply changes ----
         existing.title = title.trim()
@@ -95,8 +87,6 @@ export const updateArticle = async (req: Request, res: Response) => {
         existing.tags = normalizedTags
         existing.isPublished = published
         existing.isFeatured = featured
-        existing.images = imageUrls
-        existing.coverImage = coverImageUrl
         existing.slug = slug || existing.slug
         existing.excerpt = excerpt || existing.excerpt
 
